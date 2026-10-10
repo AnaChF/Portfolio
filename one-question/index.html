@@ -1,0 +1,490 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#24382E">
+<meta name="description" content="A guided, one-question-at-a-time path from a three-way tension to Postulates, a Definition and Theorem 1.">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icons/icon-192.png" type="image/png">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="One Question">
+<title>One Question at a Time</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600&family=Inter:wght@400;500;600&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&display=swap">
+<style>
+/* layout: a structural truss. A rail of question nodes on the left, one question at a time on the right; below 820px the rail folds into a collapsible map above the question. */
+:root{
+  --bg:#EFEAE0; --panel:#F7F3EA; --fg:#1C201B; --muted:#586155; --line:#cdc7b8;
+  --forest:#24382E; --on-forest:#EFEAE0; --rust:#A85A34; --on-rust:#FFF8F0; --rust-ink:#8A4624;
+  --sage:#92A18B; --sage-soft:#dfe3d4; --field:#FBF8F1;
+  --f-display:'Fraunces',Georgia,serif; --f-body:'Source Serif 4',Georgia,serif; --f-ui:'Inter',system-ui,sans-serif;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#151915; --panel:#1D231D; --fg:#EFEAE0; --muted:#A3AB9C; --line:#34402f;
+  --forest:#2C4538; --on-forest:#EFEAE0; --rust:#D08A62; --on-rust:#1C201B; --rust-ink:#E0A180;
+  --sage:#92A18B; --sage-soft:#26301F; --field:#101410; color-scheme:dark;}}
+:root[data-theme="dark"]{
+  --bg:#151915; --panel:#1D231D; --fg:#EFEAE0; --muted:#A3AB9C; --line:#34402f;
+  --forest:#2C4538; --on-forest:#EFEAE0; --rust:#D08A62; --on-rust:#1C201B; --rust-ink:#E0A180;
+  --sage:#92A18B; --sage-soft:#26301F; --field:#101410; color-scheme:dark;}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--fg);font-family:var(--f-body);font-size:17px;line-height:1.55;padding-inline:18px;padding-block:0 56px}
+.wrap{max-width:1080px;margin-inline:auto}
+:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+header.top{display:flex;flex-wrap:wrap;align-items:baseline;gap:6px 18px;padding-block:26px 12px;border-bottom:1px solid var(--line)}
+.mark{font-family:var(--f-display);font-weight:600;font-size:26px;letter-spacing:-.01em;color:var(--fg)}
+.appname{font-family:var(--f-ui);font-size:13px;color:var(--muted);letter-spacing:.06em;text-transform:uppercase}
+.status{margin-left:auto;font-family:var(--f-ui);font-size:12px;color:var(--muted)}
+nav.tabs{display:flex;gap:2px;overflow-x:auto;border-bottom:1px solid var(--line);margin-bottom:26px}
+nav.tabs button{font:500 14px var(--f-ui);color:var(--muted);background:none;border:0;border-bottom:3px solid transparent;padding:12px 14px 10px;cursor:pointer;white-space:nowrap}
+nav.tabs button[aria-selected="true"]{color:var(--fg);border-bottom-color:var(--rust)}
+button:focus-visible,summary:focus-visible,textarea:focus-visible,select:focus-visible,input:focus-visible{outline:2px solid var(--rust);outline-offset:2px}
+h1,h2,h3{font-family:var(--f-display);font-weight:600;line-height:1.15;text-wrap:balance;margin:0}
+h2{font-size:28px}h3{font-size:19px}
+p{margin:0 0 .8em;max-width:68ch}
+.eyebrow{font:500 12px var(--f-ui);letter-spacing:.1em;text-transform:uppercase;color:var(--rust-ink)}
+.lede{color:var(--muted);max-width:66ch}
+.game{display:grid;grid-template-columns:250px minmax(0,1fr);gap:36px;align-items:start}
+.rail{position:sticky;top:12px;max-height:calc(100vh - 24px);overflow:auto;padding-right:6px}
+.rail summary{font:600 13px var(--f-ui);cursor:pointer;padding:6px 0;list-style:none}
+.rail ul{list-style:none;margin:6px 0 0;padding:0 0 0 10px;border-left:2px solid var(--line)}
+.rail li{margin:0}
+.rail .ph{font:600 11px var(--f-ui);letter-spacing:.1em;text-transform:uppercase;color:var(--muted);padding:12px 0 4px 14px}
+.rail button{display:flex;align-items:center;gap:10px;width:100%;text-align:left;background:none;border:0;padding:5px 6px 5px 0;margin-left:-6px;font:500 13px var(--f-ui);color:var(--fg);cursor:pointer;border-radius:4px}
+.rail button .dot{flex:none;width:11px;height:11px;border-radius:50%;border:2px solid var(--line);background:var(--bg);margin-left:-6px}
+.rail button.has .dot{border-color:var(--rust)}
+.rail button.done .dot{background:var(--forest);border-color:var(--forest)}
+.rail button.cur{font-weight:600}
+.rail button.cur .dot{box-shadow:0 0 0 3px var(--sage-soft);border-color:var(--rust)}
+.rail button .qt{color:var(--muted);font-weight:400;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;min-width:0}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:6px;padding:26px 28px}
+.card + .card{margin-top:18px}
+.qid{font:600 44px/1 var(--f-display);color:var(--forest);margin:6px 0 14px}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]) .qid{color:var(--sage)}}
+:root[data-theme="dark"] .qid{color:var(--sage)}
+.qtext{font-size:21px;line-height:1.4;max-width:60ch;margin-bottom:18px}
+textarea{width:100%;min-height:150px;resize:vertical;font:17px/1.55 var(--f-body);color:var(--fg);background:var(--field);border:1px solid var(--line);border-radius:4px;padding:12px 14px}
+textarea.short{min-height:92px}
+.row{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin-top:14px}
+.btn{font:500 14px var(--f-ui);border-radius:4px;border:1px solid var(--forest);background:none;color:var(--fg);padding:9px 14px;cursor:pointer}
+.btn.pri{background:var(--rust);border-color:var(--rust);color:var(--on-rust);font-weight:600}
+.btn.on{background:var(--forest);color:var(--on-forest)}
+.btn.link{border-color:var(--line);color:var(--muted)}
+.spacer{flex:1}
+details.aid{border-top:1px solid var(--line);margin-top:18px;padding-top:12px}
+details.aid summary{font:600 13px var(--f-ui);cursor:pointer;color:var(--fg)}
+details.aid .body{padding:10px 0 2px;color:var(--fg);font-size:16px}
+details.aid.ex .body{background:var(--sage-soft);border-left:3px solid var(--sage);padding:12px 14px;margin-top:10px;border-radius:0 4px 4px 0}
+.tag{font:600 11px var(--f-ui);letter-spacing:.08em;text-transform:uppercase;color:var(--muted);display:block;margin-bottom:4px}
+.jumps{display:flex;flex-wrap:wrap;gap:8px;margin-top:8px}
+.intro summary{font:600 14px var(--f-ui);cursor:pointer}
+.intro ul{margin:10px 0 0;padding-left:20px}
+.intro li{margin-bottom:6px;max-width:66ch}
+.progress{font:500 13px var(--f-ui);color:var(--muted);margin:0 0 14px}
+.bar{height:6px;background:var(--line);border-radius:3px;overflow:hidden;margin:6px 0 18px;max-width:340px}
+.bar i{display:block;height:100%;background:var(--forest)}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]) .bar i{background:var(--sage)}}
+:root[data-theme="dark"] .bar i{background:var(--sage)}
+.grid2{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:18px}
+.field{display:flex;flex-direction:column;gap:6px}
+.field label{font:600 13px var(--f-ui)}
+.field .hint{font:400 13px var(--f-ui);color:var(--muted)}
+table{border-collapse:collapse;width:100%;font-size:15px}
+th,td{text-align:left;padding:9px 12px 9px 0;border-bottom:1px solid var(--line);vertical-align:top}
+th{font:600 11px var(--f-ui);letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.scroll{overflow-x:auto}
+.pull{background:var(--sage-soft);border-left:3px solid var(--sage);border-radius:0 4px 4px 0;padding:10px 14px;margin:0 0 10px;font-size:15.5px;max-width:70ch}
+.pull b{font:600 12px var(--f-ui);letter-spacing:.05em;color:var(--muted);display:block}
+.pull .empty{color:var(--muted);font-style:italic}
+.ck{display:flex;gap:10px;align-items:flex-start;margin:0 0 9px;max-width:68ch}
+.ck input{margin-top:6px;width:17px;height:17px;accent-color:var(--forest);flex:none}
+.stack{display:flex;flex-direction:column;gap:18px}
+.k{font:500 13px var(--f-ui);color:var(--muted)}
+footer{margin-top:44px;padding-top:14px;border-top:1px solid var(--line);font:400 13px var(--f-ui);color:var(--muted)}
+@media (max-width:820px){
+  .game{grid-template-columns:minmax(0,1fr);gap:16px}
+  .rail{position:static;max-height:none;padding:0}
+  .rail details{background:var(--panel);border:1px solid var(--line);border-radius:6px;padding:8px 14px}
+  .card{padding:20px 16px}
+  .qid{font-size:36px}.qtext{font-size:19px}
+  body{font-size:16.5px}
+}
+@media (prefers-reduced-motion:no-preference){.card{transition:border-color .15s}}
+</style>
+</head>
+<body>
+
+
+<div class="wrap">
+  <header class="top">
+    <span class="mark">anakis</span>
+    <span class="appname">One Question at a Time</span>
+    <span class="status" id="status" aria-live="polite"></span>
+  </header>
+  <nav class="tabs" role="tablist" id="tabs"></nav>
+  <main id="view"></main>
+  <footer>anakis. Answers stay informal until Phase 6. Earlier answers can be revised at any point.</footer>
+</div>
+
+<script>
+/* ---------- content ---------- */
+const PHASES=[
+ {n:1,name:'Find the tension',goal:'Locate three individually rational concepts whose joint consistency fails, and turn that failure into a minimal, structural example.'},
+ {n:2,name:'The desideratum',goal:'State, in plain English, the property a resolution would need to have. No symbols yet.'},
+ {n:3,name:'The proof attempt',goal:'Produce a construction, even a failing one, and read the missing concept off of it.'},
+ {n:4,name:'Extracting X',goal:'Turn the missing condition into a candidate key concept.'},
+ {n:5,name:'Testing X',goal:'Try to break the candidate X before trusting it.'},
+ {n:6,name:'Formalizing',goal:'Convert everything collected so far into Postulates, a Definition, and Theorem 1, in that order.'}
+];
+const Q=[
+{id:'Q1',ph:1,t:'Three concepts',q:'Think of three concepts that each seem rational on their own. Are they jointly consistent?',
+ chk:'Each candidate must be statable in a sentence that does not use the other two\'s vocabulary. If defending one already requires mentioning another, they are not independent yet, so split further. "Jointly consistent" is a genuine yes/no question: is there a model satisfying all three at once, even answered informally for now.',
+ ex:'(1) Belief is closed under conjunction and entailment, and is consistent. (2) Degrees of belief obey the probability axioms. (3) An agent should believe a proposition exactly when its degree of belief exceeds some threshold. Each is independently defensible. Jointly? Under the most natural reading, no: lottery-style cases make (1) and (3) collide.',
+ br:'If yes, stop. Either the real tension has not been found yet, or this paper is not shaped as a trilemma at all, and the framing needs rethinking before Q2. If no, go to Q2.'},
+{id:'Q2',ph:1,t:'Which one is the bridge',q:'Which of the three, once removed, resolves the inconsistency between the other two? That one is the bridge claim; the other two are the standalone claims.',
+ chk:'Remove each concept in turn and check whether the remaining two are jointly satisfiable. Exactly one removal should restore consistency. If more than one does, the tension is over-determined: a fourth concept may be hiding, or one of the three is doing double duty. If none does, the inconsistency is not a genuine three-way tension.',
+ ex:'Remove (3), the threshold claim: closure and the probability axioms are jointly harmless on their own. Remove (1) or (2) instead, and the tension also dissolves, but at the cost of the theory you actually wanted. So (3) is the bridge; (1) and (2) are the standalone claims.',
+ jumps:[['Q1','Back to Q1: split or replace a concept']]},
+{id:'Q3a',ph:1,t:'Smallest scenario',q:'What is the smallest possible scenario, with the fewest objects, worlds and agents, where all three concepts apply at once? Not where the conflict is visible yet, just where all three are invoked.',
+ chk:'Q3 is built by forcing each concept to make a demand and watching where the demands collide, so keep this scenario free of the conflict for now.',
+ ex:'An n-ticket lottery, one winning ticket, uniform probability 1/n. Small enough to start: n = 4.'},
+{id:'Q3b',ph:1,t:'What each requires',q:'For that scenario, state separately what each of the three concepts requires. Three sentences, no interaction between them yet.',
+ chk:'Each sentence should mention only its own concept. Interaction comes in Q3c.',
+ ex:'(1) requires: if the agent believes ticket 1 loses, ticket 2 loses, etc., closure forces belief in "some ticket loses," and consistency forbids believing all four lose. (2) requires: each "ticket i loses" has probability 3/4. (3) requires: belief exactly when probability exceeds the threshold.'},
+{id:'Q3c',ph:1,t:'Contradiction or scope',q:'Compare the three requirements from Q3b. Is the conflict a direct formal contradiction, or does it only appear under one particular reading of the bridge claim (a quantifier-scope ambiguity)?',
+ chk:'This determines the shape of the eventual resolution: a genuine impossibility result, or a disambiguation move.',
+ ex:'With threshold r = 3/4, (3) says the agent believes each "ticket i loses." By (1), the agent then believes their conjunction, "no ticket wins," which contradicts "some ticket wins" (probability 1). The conflict traces to reading (3) as "there is one fixed r that works for every P," rather than "for every P there is some r."'},
+{id:'Q3d',ph:1,t:'Known paradox',q:'Is there a known paradox in the literature with the same structure, even in a different domain?',
+ chk:'If yes: a citation anchor for §1, possibly a naming convention for the case. If no: a new example, handled with more care in Q3e.',
+ ex:'Yes: this is exactly the Lottery Paradox (Kyburg 1961).'},
+{id:'Q3e',ph:1,t:'Shrink it',q:'Can the scenario from Q3a be shrunk further while the conflict from Q3c survives?',
+ chk:'Minimality matters. Use the smallest world space that still makes the point, never more than needed. A bloated example obscures which feature does the work.',
+ ex:'n = 3 already reproduces the conflict (threshold 2/3). n = 2 does not, since a fair coin never clears a threshold above 1/2. So n = 3 is the minimal case.'},
+{id:'Q3f',ph:1,t:'Accident or structure',q:'Does the conflict depend on some accidental feature of the numbers chosen, or does it reflect something structural that recurs under any similar choice?',
+ chk:'Accidental means a curiosity, not a paradox. You need the structural version for §1.',
+ ex:'Structural: for any n and any fixed threshold r, choosing enough tickets (n > 1/(1-r)) reproduces the same collision. The particular numbers do not matter, only that a fixed threshold under a uniform distribution can always be outrun.'},
+{id:'Q4',ph:1,t:'Why not drop one',q:'Why is dropping one of the three genuinely unsatisfying, rather than a clean fix?',
+ chk:'One sentence per claim on what independent work it does elsewhere, and what would be lost by abandoning it. If nothing comes to mind for one of the three, that claim may be the weakest of the set and possibly dispensable. Better to know now than after building formal machinery around it.',
+ ex:'Dropping (1) gives up ordinary deductive reasoning about what is believed. Dropping (2) gives up standard probability theory as the theory of degrees of belief. Dropping (3) gives up any principled link between the two attitudes at all. Each loss is a real cost elsewhere, not just within this paper.'},
+{id:'Q5a',ph:2,t:'Hard or scope',q:'Was the Q3c conflict a hard contradiction or a scope ambiguity?',
+ chk:'If a scope ambiguity, the desideratum is usually about which reading is correct, and why. If a hard contradiction, the desideratum is about what extra condition, absent from the three concepts as stated, would block the derivation.',
+ ex:'A scope ambiguity: "for all P, there is an r" was silently read as "there is an r, for all P."'},
+{id:'Q5b',ph:2,t:'The property in one sentence',q:'State the property as one sentence, no symbols: "a resolution needs to guarantee that ___ under all cases where ___."',
+ chk:'The sentence should be falsifiable in principle: you should be able to imagine a model where it fails. If you cannot, it is empty.',
+ ex:'A resolution needs to guarantee that a believed proposition\'s high probability survives updating on any evidence compatible with it, not merely that the probability is high right now.'},
+{id:'Q5c',ph:2,t:'Does it dissolve the case',q:'Check the desideratum against Q3a\'s minimal scenario: if a solution had this property, does the Q3c conflict actually go away there?',
+ chk:'If you cannot see why it would, the desideratum is not doing real work. It restates "the problem should be solved" rather than giving a handle on how.',
+ ex:'In the lottery, "ticket 1 loses" has probability 3/4 but is not robust: conditioning on "ticket 1 or ticket 2 wins" drops it to 0. So the desideratum correctly withholds belief there, blocking the conjunction that caused the contradiction.',
+ jumps:[['Q5b','Back to Q5b: sharpen the property']]},
+{id:'Q5d',ph:2,t:'Which move it favors',q:'Does the desideratum favor one horn of the Q3c ambiguity over the other, or does it point to a different move entirely (restricting the domain, adding a parameter)?',
+ chk:'Name which move it points toward. This is the first hint of what Theorem 1 will eventually say.',
+ ex:'It favors the "for all P, there is an r" reading: the threshold is allowed to depend on P itself, rather than being fixed in advance.'},
+{id:'Q6',ph:3,t:'First attempt',q:'What is your first rough attempt at showing the three concepts can hold together?',
+ chk:'It is not required to work. Write down concretely what you would check to see whether the three concepts hold in this construction.',
+ ex:'Try setting the threshold r equal to the probability of the strongest believed proposition itself, r = P(BW), where BW is the intersection of everything believed, and check whether this choice keeps (1) to (3) consistent in the lottery case.'},
+{id:'Q7',ph:3,t:'What it depended on',q:'What did that attempt actually depend on? What condition kept showing up?',
+ chk:'The single most important move in the whole game. Go through the Q6 attempt and mark every place a fact was needed that was not already guaranteed by the three concepts alone, some extra condition silently assumed to make the construction work. That condition, isolated and named, is the raw material for X.',
+ ex:'The construction only worked when BW\'s probability stayed above 1/2 under every compatible conditionalization, not just at the outset. That robustness condition was never stated in (1) to (3); it was smuggled in by the choice of r.'},
+{id:'Q8',ph:4,t:'Candidate X',q:'Based on Q7, what is your candidate for X?',
+ chk:'State it independently of the specific model built in Q6 and Q7, as a general property definable on any instance of the framework. It should use only primitives already fixed for A1 and A2. If stating X needs a new undefined primitive, that primitive needs its own justification first.',
+ ex:'X = P-stability: a proposition A is P-stable iff, for every B compatible with A and of positive probability, P(A | B) > 1/2. Only uses P and set operations already available.'},
+{id:'Q9a',ph:5,t:'A second scenario',q:'Construct a second scenario, structurally different from Q3a\'s: different size, different numbers, ideally a different kind of case. Does X hold there?',
+ chk:'Work it out explicitly, with every number stated.',
+ ex:'W = {w1, w2, w3, w4}, P = (0.45, 0.30, 0.15, 0.10). {w1, w2, w3} is P-stable: the worst-case conditionalization is on {w3, w4}, giving P({w1,w2,w3} | {w3,w4}) = 0.6 > 1/2. So X holds here.'},
+{id:'Q9b',ph:5,t:'Vacuity check',q:'Is there any nonempty model where X holds, or does the definition accidentally rule out everything?',
+ chk:'If vacuous, the eventual theorem would be true but empty, a fact about the empty set, not a discovery.',
+ ex:'W itself is always P-stable (probability 1, nothing to condition on that lowers it below 1). So X is never vacuous; the interesting question is whether anything smaller than W is P-stable.'},
+{id:'Q9c',ph:5,t:'Over-permissiveness',q:'Find or construct a case that, intuitively, should NOT count as resolving the tension, something clearly degenerate or trivial. Does X wrongly hold there anyway?',
+ chk:'If so, X is too weak. Return to Q7 and Q8: what extra condition from the failed proof attempt was left out?',
+ ex:'In the n = 4 lottery, {w1} alone (probability 1/4) is not P-stable: conditioning on {w1, w2} drops it to 1/2, not above. Good, X correctly excludes single lottery tickets.',
+ jumps:[['Q7','Back to Q7: what was left out'],['Q8','Back to Q8: strengthen X']]},
+{id:'Q9d',ph:5,t:'Boundary check',q:'Perturb Q9a\'s example slightly so X should just barely fail. Does it?',
+ chk:'This confirms X tracks something precise rather than something coincidental to the first two examples.',
+ ex:'Change P to (0.40, 0.30, 0.20, 0.10): now {w1, w2, w3} conditioned on {w3, w4} gives 0.20/0.30 = 0.67 > 1/2, still stable; push w4 to 0.34 instead and it drops to just under 1/2, correctly failing.'},
+{id:'Q9e',ph:5,t:'Official examples',q:'Once Q9a to Q9d pass: does this example deserve to become the paper\'s official Example 1 (right after the Definition) or Example 2 (verifying the theorem)?',
+ chk:'Note which. The two Examples serve different rhetorical jobs in the template.',
+ ex:'The n = 4 case from Q3a becomes Example 1, right after the Definition, since it is already the minimal motivating case. The Q9a case becomes Example 2, verifying Theorem 1 on a fresh model.'},
+{id:'Q10a',ph:6,t:'Postulate scope',q:'For each of the three concepts, write its quantifier scope first, before the content: "for all [variables] such that [domain restriction] ..."',
+ chk:'Done separately from content because a Postulate is never stated without an explicit domain, and getting the scope wrong here is exactly the failure mode Q3c may already have exposed.',
+ ex:'P1: for all propositions A, B ⊆ W. P2: P a probability measure on W. P3: for all propositions B ⊆ W.'},
+{id:'Q10b',ph:6,t:'Postulate content',q:'Fill in the content of each Postulate given its Q10a scope.',
+ chk:'Standalone Postulates mention only their own primitive. The bridge Postulate is the only one mentioning both, and this is where Q3c\'s disambiguation, if there was one, gets written in explicitly, stating the correct reading, not both.',
+ ex:'P1: Bel(W); not Bel(∅); if Bel(A) and A ⊆ B then Bel(B); if Bel(A) and Bel(B) then Bel(A ∩ B). P2: the Kolmogorov axioms. P3: there is a real r with 1/2 < r ≤ 1 such that Bel(B) iff P(B) ≥ r, with r allowed to depend on P, per Q5d.'},
+{id:'Q10c',ph:6,t:'Postulate gloss',q:'For each Postulate, write one to three sentences of gloss: why is this constraint independently plausible?',
+ chk:'Tie back to Q4\'s answer about what is lost if the claim is dropped.',
+ ex:'P1 encodes ordinary deductive closure of belief, which any account of rational belief needs. P2 is just standard probability theory applied to degrees of belief. P3 is the weakest plausible link between the two: high enough credence suffices for belief.'},
+{id:'Q11a',ph:6,t:'Definition scope',q:'State X\'s scope variables first, restating anything already fixed by the Postulates so the Definition is self-contained.',
+ chk:'The Definition should be readable without looking back at the Postulates.',
+ ex:'Let W be a finite nonempty set of possible worlds and P a probability measure on W (restating the scope already fixed by P2).'},
+{id:'Q11b',ph:6,t:'Definition content',q:'State X\'s content using "if and only if" in full, every quantifier spelled out as a clause, following the Q7 and Q8 extraction, not a fresh formulation.',
+ chk:'If this does not match what Q9\'s examples actually computed, the informal and formal versions have drifted apart. Reconcile before moving on.',
+ ex:'A ⊆ W is P-stable if and only if: for all B ⊆ W such that A ∩ B ≠ ∅ and P(B) > 0, P(A | B) > 1/2.',
+ jumps:[['Q9a','Back to Q9a: recompute the examples']]},
+{id:'Q12a',ph:6,t:'Theorem, statement I',q:'State statement I: the Postulates (all of them, jointly) hold.',
+ chk:'Name every Postulate, and any parameter such as a threshold, in this statement.',
+ ex:'I. Bel and P satisfy P1 to P3, with threshold r = P(BW).'},
+{id:'Q12b',ph:6,t:'Theorem, statement II',q:'State statement II: X holds (possibly with a side condition, as needed).',
+ chk:'Use the Definition from Q11b by name. State any side condition explicitly.',
+ ex:'II. BW is P-stable (and, if P(BW) = 1, it is the least subset of W with probability 1).'},
+{id:'Q12c',ph:6,t:'Proof sketch',q:'Sketch, one sentence per direction, why I implies II and why II implies I.',
+ chk:'If even a one-line sketch cannot be produced for one direction, that direction is not ready to write up, and probably traces back to something incomplete in Phase 3.',
+ ex:'I ⇒ II: if the threshold r works for P, then BW\'s probability cannot drop to 1/2 or below under any compatible conditionalization, since that would pull some believed proposition\'s probability below r too. II ⇒ I: if BW is P-stable, setting r = P(BW) makes P3 hold by construction, and P1 and P2 follow from how BW was defined.',
+ jumps:[['Q6','Back to Phase 3 (Q6)'],['Q7','Back to Q7']]}
+];
+const BYID=Object.fromEntries(Q.map(q=>[q.id,q]));
+
+const PW=[
+ ['contribution','1. Contribution sentence','Others have thought X (or have not addressed X); I show Y; this matters because Z. A well-informed reader should be able to disagree with it or find it surprising.'],
+ ['thesis','2. Thesis sentence','The claim the paper defends, in one sentence.'],
+ ['premises','3. Numbered premises or main steps','The shortest chain from shared starting points to the thesis. Each premise is either accepted by the reader or defended in the paper.'],
+ ['rivals','4. Closest rival positions and who holds them','One or two existing positions your claim is positioned against.'],
+ ['reader','5. Target reader','A specialist in the sub-field, a generalist in the discipline, or an editor deciding whether to send the paper out.'],
+ ['scope','6. Scope limits','What is assumed, what is set aside, what is left for future work. Two or three sentences.'],
+ ['costs','7. Known costs or objections','What the position commits you to, and the strongest objections.'],
+ ['title','8. Working title and draft abstract','About 150 words. You will rewrite it at the end.']
+];
+const DR=[
+ {id:'d1',h:'§1 Introduction',job:'Situate, locate the gap, announce the contribution and the roadmap. Roughly one tenth of the paper.',from:['Q1','Q2','Q3d','Q3f','Q4']},
+ {id:'d2',h:'§2 Setup',job:'Postulates one at a time, each followed by a gloss, then the statement of the apparent incompatibility.',from:['Q3a','Q3e','Q10a','Q10b','Q10c']},
+ {id:'d3',h:'§3 Key concept',job:'The Definition of X, with a motivating sentence, then Example 1.',from:['Q8','Q11a','Q11b','Q9e']},
+ {id:'d4',h:'§4 Main result',job:'A motivating sentence, then Theorem 1 with its proof, then a plain-language reading of two to four sentences. Roughly a third of the paper.',from:['Q12a','Q12b','Q12c']},
+ {id:'d5',h:'§5 Consequences',job:'Corollaries, Example 2 verifying the theorem, and how known paradoxes look inside the framework.',from:['Q5d','Q9a','Q9d']},
+ {id:'d6',h:'§6 Payoff and costs',job:'What the view gives up or assumes and why that is affordable, the limits of the result, and connections outward.',from:['Q4']},
+ {id:'d7',h:'§7 Summary',job:'What was achieved, at what cost, why it is affordable. Nothing new.',from:['Q12b']},
+ {id:'d8',h:'Abstract, written last',job:'Context in one sentence, the result stated flatly, the key move, one or two consequences. 150 to 250 words.',from:['Q8','Q12b']}
+];
+const ARCH=[
+ ['Title and abstract','Let the right reader find the paper and learn the result at once','150 to 250 words'],
+ ['Introduction','Situate, locate the gap, announce the contribution and the roadmap','8 to 12%'],
+ ['Background','Give only the material the argument needs, framed around the gap','5 to 10%'],
+ ['Framework or setup','Fix definitions, assumptions and notation exactly when needed','10 to 15%'],
+ ['Core argument or result','Deliver the main claim with full support','30 to 40%'],
+ ['Objections and replies','Test the claim against the strongest resistance','10 to 15%'],
+ ['Implications','Show what follows, what it costs, how it connects outward','8 to 12%'],
+ ['Conclusion','Close the circle: what was shown, at what cost, what remains','3 to 5%']
+];
+const COMP=[
+ ['Postulate','State a constraint, with its scope','A one to three sentence gloss'],
+ ['Definition','Introduce a recurring concept; restate scope variables so it is self-contained','An Example on a small explicit case'],
+ ['Lemma','Technical preparation; move routine ones to footnotes or the appendix','A short proof'],
+ ['Theorem','The main result: a representation theorem or an impossibility result','A full proof, then two to four sentences of plain reading. Never appears cold'],
+ ['Corollary','An immediate consequence','A one or two line proof'],
+ ['Example','After a definition, after the theorem, and when handling a paradox. All numbers stated','A sentence linking it back'],
+ ['Remark','Scope limits, terminology notes, pointers. One to four sentences','Nothing. If longer, promote it to a subsection']
+];
+const SKEL=[
+ 'Prose: the puzzle as jointly inconsistent plausible principles, with the roadmap',
+ 'Postulates one at a time, each followed by a gloss',
+ 'Statement of the apparent incompatibility',
+ 'Definition of the key concept, then an Example',
+ 'Lemmas, then the motivating sentence, then the Theorem and Proof',
+ 'Philosophical or substantive reading of the Theorem',
+ 'Corollaries, a verifying Example, Remarks',
+ 'Applications: how known paradoxes or objections look in the framework',
+ 'Costs, limits and connections',
+ 'Summary: what was achieved, at what cost, why it is affordable'
+];
+const ORDER=[
+ 'Pre-writing page',
+ 'Section headings and topic sentences only',
+ 'Framework and core argument',
+ 'Objections and replies',
+ 'Implications and conclusion',
+ 'Introduction and roadmap, matched to the real structure',
+ 'Abstract and title, from the finished paper',
+ 'Background, citations, footnotes, appendix'
+];
+const BEFORE=[
+ 'Abstract front-loads the result and matches the body',
+ 'Introduction has problem, gap, contribution, thesis, result preview, accurate roadmap',
+ 'Every section does exactly one job, and its first paragraph says which',
+ 'Every defined term is used consistently, and every used term is defined',
+ 'Every formal item is introduced by a motivating sentence and followed by an interpretation',
+ 'The strongest two to four objections are addressed fairly',
+ 'Costs and limits are stated by you, not left to the referee',
+ 'Conclusion adds nothing new and says what was shown, at what cost',
+ 'References are complete, and every cited claim has been checked against the source',
+ 'Someone else has read it, or it has rested for a week'
+];
+
+/* ---------- state and persistence ---------- */
+const LS='anakis-one-question-v1';
+let S={a:{},s:{},pw:{},dr:{},ck:{},cur:'Q1',tab:'game',t:0};
+function norm(x){const d={a:{},s:{},pw:{},dr:{},ck:{},cur:'Q1',tab:'game',t:0};return Object.assign(d,x||{});}
+try{const raw=localStorage.getItem(LS);if(raw)S=norm(JSON.parse(raw));}catch(e){}
+let docRef=null,saveTimer=null;
+const $=s=>document.querySelector(s);
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+function setStatus(t){const el=$('#status');if(el)el.textContent=t;}
+function touch(){
+  S.t=Date.now();
+  try{localStorage.setItem(LS,JSON.stringify(S));}catch(e){}
+  setStatus('Saving…');
+  clearTimeout(saveTimer);
+  saveTimer=setTimeout(async()=>{
+    if(docRef){try{await docRef.set({state:JSON.stringify(S),t:S.t});setStatus('Saved to your account');return;}catch(e){}}
+    setStatus('Saved in this browser');
+  },700);
+}
+async function initDb(){
+  try{
+    if(!(window.claude&&claude.use))return;
+    const [user,db]=await Promise.all([claude.use('user'),claude.use('db')]);
+    if(!user||!db)return;
+    const id=await user.id();
+    docRef=db.collection('data/users/'+id).doc('paper-game');
+    const snap=await docRef.get();
+    if(snap.exists){
+      const r=snap.data();
+      if(r&&r.state&&(r.t||0)>(S.t||0)){S=norm(JSON.parse(r.state));try{localStorage.setItem(LS,JSON.stringify(S));}catch(e){}render();}
+      else if(S.t>(r&&r.t||0)){touch();}
+    }else if(S.t){touch();}
+    setStatus('Saved to your account');
+  }catch(e){setStatus('Saved in this browser');}
+}
+
+/* ---------- helpers ---------- */
+const idx=id=>Q.findIndex(q=>q.id===id);
+const hasText=id=>(S.a[id]||'').trim().length>0;
+function count(){return {settled:Q.filter(q=>S.s[q.id]).length,total:Q.length};}
+function goto(id){S.cur=id;touch();render();window.scrollTo({top:0});}
+function setTab(t){S.tab=t;touch();render();window.scrollTo({top:0});}
+function pull(ids){
+  return ids.map(id=>{const q=BYID[id];const a=(S.a[id]||'').trim();
+    return `<div class="pull"><b>${esc(id)} ${esc(q.t)}</b>${a?esc(a).replace(/\n/g,'<br>'):'<span class="empty">No answer yet.</span>'}</div>`;}).join('');
+}
+
+/* ---------- views ---------- */
+function tabsHtml(){
+  const T=[['game','The game'],['pre','Pre-writing page'],['draft','Drafting board'],['blue','Blueprint'],['out','Export']];
+  $('#tabs').innerHTML=T.map(([k,l])=>`<button role="tab" aria-selected="${S.tab===k}" data-tab="${k}">${l}</button>`).join('');
+  $('#tabs').querySelectorAll('button').forEach(b=>b.onclick=()=>setTab(b.dataset.tab));
+}
+function railHtml(){
+  let h='<ul>';let last=0;
+  Q.forEach(q=>{
+    if(q.ph!==last){last=q.ph;h+=`<li class="ph">${q.ph} ${esc(PHASES[q.ph-1].name)}</li>`;}
+    const cls=[S.s[q.id]?'done':'',hasText(q.id)?'has':'',S.cur===q.id?'cur':''].join(' ');
+    h+=`<li><button class="${cls}" data-id="${q.id}" ${S.cur===q.id?'aria-current="step"':''}><span class="dot"></span><span>${q.id}</span><span class="qt">${esc(q.t)}</span></button></li>`;
+  });
+  return h+'</ul>';
+}
+function viewGame(){
+  const q=BYID[S.cur]||Q[0];const i=idx(q.id);const ph=PHASES[q.ph-1];const c=count();
+  const jumps=(q.jumps||[]).map(([to,l])=>`<button class="btn link" data-go="${to}">${esc(l)}</button>`).join('');
+  const intro=`<details class="card intro"><summary>How the game works</summary><ul>
+   <li>One question per turn. Answer whenever ready; there is no time pressure despite the name.</li>
+   <li>Answers can stay informal, rough sentences and sketches, until Phase 6.</li>
+   <li>No question is answered on your behalf. Each is only asked, plus, if useful, a logical check once you answer.</li>
+   <li>Earlier answers can be revised at any point. Later questions build on the current state of earlier ones.</li>
+   <li>Some questions branch: a failed check sends you back to an earlier question rather than forward.</li>
+   <li>The game ends at the close of Phase 6. From there, drafting follows the section-by-section template, using the answers collected here.</li>
+   <li><b>A1, A2</b> are the two notions, each with its own rigorous theory, neither reducing to the other. <b>C1, C2, C3</b> are the three claims: C1 uses only A1's vocabulary, C2 only A2's, and C3 is the only one where both occur, the bridge. If two claims both mention only A1, one of them is a sub-clause of C1.</li>
+   <li>The example answers are the shape and level of detail to expect, drawn from the belief and degree-of-belief case. They are not suggestions for your own content.</li></ul></details>`;
+  return `<div class="game">
+   <aside class="rail"><details id="mapd"><summary>Map of questions</summary>${railHtml()}</details></aside>
+   <section>
+    <p class="progress">${c.settled} of ${c.total} questions settled</p>
+    <div class="bar" role="progressbar" aria-valuemin="0" aria-valuemax="${c.total}" aria-valuenow="${c.settled}"><i style="width:${Math.round(100*c.settled/c.total)}%"></i></div>
+    ${S.cur==='Q1'?intro:''}
+    <article class="card">
+      <div class="eyebrow">Phase ${ph.n}, ${esc(ph.name)}</div>
+      <div class="qid">${q.id}</div>
+      <p class="qtext">${esc(q.q)}</p>
+      <textarea id="ans" aria-label="Your answer to ${q.id}" placeholder="Rough sentences are fine here.">${esc(S.a[q.id]||'')}</textarea>
+      <div class="row">
+        <button class="btn ${S.s[q.id]?'on':''}" id="settle" aria-pressed="${!!S.s[q.id]}">${S.s[q.id]?'Settled':'Mark as settled'}</button>
+        <span class="spacer"></span>
+        ${i>0?'<button class="btn link" id="prev">Previous</button>':''}
+        ${i<Q.length-1?'<button class="btn pri" id="next">Next question</button>':''}
+      </div>
+      <details class="aid" id="chk" ${hasText(q.id)?'open':''}><summary>Logical check</summary><div class="body">${esc(q.chk)}</div></details>
+      ${q.br?`<details class="aid"><summary>Branching</summary><div class="body">${esc(q.br)}</div></details>`:''}
+      ${jumps?`<details class="aid"><summary>If the check fails</summary><div class="body">The earlier answers stay as they are, and you can revise them.<div class="jumps">${jumps}</div></div></details>`:''}
+      <details class="aid ex"><summary>Example answer, shape only</summary><div class="body"><span class="tag">Belief and degree-of-belief thread</span>${esc(q.ex)}</div></details>
+    </article>
+    <p class="k" style="margin-top:14px">${esc(ph.goal)}</p>
+   </section></div>`;
+}
+function viewPre(){
+  return `<h2>Pre-writing page</h2><p class="lede" style="margin-top:8px">One page, settled before the first paragraph exists. If an item cannot be written, the paper is not ready to be drafted, and no outline will fix that. The game answers feed several of these.</p>
+  <div class="stack" style="margin-top:22px">${PW.map(([k,l,h])=>`<div class="field card"><label for="pw_${k}">${esc(l)}</label><span class="hint">${esc(h)}</span><textarea class="short" id="pw_${k}" data-pw="${k}">${esc(S.pw[k]||'')}</textarea></div>`).join('')}</div>`;
+}
+function viewDraft(){
+  return `<h2>Drafting board</h2><p class="lede" style="margin-top:8px">The game ends where drafting begins. Each section shows the answers it draws on, with room for your own notes. Write in the order that reduces rework: framework and result first, introduction and abstract last.</p>
+  <div class="stack" style="margin-top:22px">${DR.map(d=>`<section class="card"><div class="eyebrow">Draws on ${d.from.join(', ')}</div><h3 style="margin:6px 0 6px">${esc(d.h)}</h3><p class="k" style="max-width:66ch">${esc(d.job)}</p>${pull(d.from)}<textarea class="short" aria-label="Notes for ${esc(d.h)}" data-dr="${d.id}" placeholder="Notes for this section">${esc(S.dr[d.id]||'')}</textarea></section>`).join('')}</div>`;
+}
+function viewBlue(){
+  const ck=(grp,arr)=>arr.map((t,i)=>{const k=grp+i;return `<label class="ck"><input type="checkbox" data-ck="${k}" ${S.ck[k]?'checked':''}><span>${esc(t)}</span></label>`;}).join('');
+  return `<h2>Blueprint</h2><p class="lede" style="margin-top:8px">The section-by-section structure for a paper that makes one main claim and defends it. Keep a field's mandatory format where it has one, and use this for what goes inside each part.</p>
+  <section class="card" style="margin-top:22px"><h3>Architecture</h3><div class="scroll" style="margin-top:10px"><table><thead><tr><th>Section</th><th>Job in one line</th><th>Share</th></tr></thead><tbody>${ARCH.map(r=>`<tr><td><b>${esc(r[0])}</b></td><td>${esc(r[1])}</td><td>${esc(r[2])}</td></tr>`).join('')}</tbody></table></div></section>
+  <section class="card"><h3>Formal components</h3><div class="scroll" style="margin-top:10px"><table><thead><tr><th>Component</th><th>Role</th><th>What follows it</th></tr></thead><tbody>${COMP.map(r=>`<tr><td><b>${esc(r[0])}</b></td><td>${esc(r[1])}</td><td>${esc(r[2])}</td></tr>`).join('')}</tbody></table></div>
+   <p class="k" style="margin-top:12px;max-width:66ch">Number environments consecutively and never rename an item once introduced. Spell out quantifier domains. State scope qualifiers on results. Mark the directions of a biconditional separately.</p></section>
+  <section class="card"><h3>Skeleton for a result-driven formal paper</h3><ol style="margin:12px 0 0;padding-left:22px;max-width:68ch">${SKEL.map(s=>`<li style="margin-bottom:5px">${esc(s)}</li>`).join('')}</ol></section>
+  <section class="card"><h3>Writing order</h3><p class="k" style="margin:6px 0 12px">Write in the order that reduces rework, not in the order the reader will read.</p>${ck('ord',ORDER)}</section>
+  <section class="card"><h3>Before sending a draft to anyone</h3><div style="margin-top:12px">${ck('bef',BEFORE)}</div></section>`;
+}
+function exportMd(){
+  let m='# One Question at a Time, notes\n\n## Pre-writing page\n\n';
+  PW.forEach(([k,l])=>{m+=`### ${l}\n\n${(S.pw[k]||'').trim()||'(open)'}\n\n`;});
+  m+='## The game\n\n';
+  PHASES.forEach(p=>{m+=`### Phase ${p.n}, ${p.name}\n\n`;Q.filter(q=>q.ph===p.n).forEach(q=>{m+=`**${q.id} ${q.t}**${S.s[q.id]?' (settled)':''}\n\n${(S.a[q.id]||'').trim()||'(open)'}\n\n`;});});
+  m+='## Drafting notes\n\n';
+  DR.forEach(d=>{m+=`### ${d.h}\n\n${(S.dr[d.id]||'').trim()||'(open)'}\n\n`;});
+  return m;
+}
+function viewOut(){
+  return `<h2>Export</h2><p class="lede" style="margin-top:8px">Everything in one Markdown file: the pre-writing page, every answer, and your drafting notes.</p>
+  <div class="row"><button class="btn pri" id="dl">Download as Markdown</button><button class="btn" id="cp">Copy to clipboard</button><span class="k" id="outmsg" aria-live="polite"></span></div>
+  <textarea id="outtxt" readonly style="min-height:420px;margin-top:16px;font-family:var(--f-ui);font-size:14px">${esc(exportMd())}</textarea>`;
+}
+
+/* ---------- render and wiring ---------- */
+function render(){
+  tabsHtml();
+  const v=$('#view');
+  v.innerHTML=({game:viewGame,pre:viewPre,draft:viewDraft,blue:viewBlue,out:viewOut}[S.tab]||viewGame)();
+  wire();
+}
+function wire(){
+  const v=$('#view');
+  v.querySelectorAll('[data-id]').forEach(b=>b.onclick=()=>goto(b.dataset.id));
+  v.querySelectorAll('[data-go]').forEach(b=>b.onclick=()=>goto(b.dataset.go));
+  const md=$('#mapd');if(md&&window.matchMedia('(min-width:821px)').matches)md.open=true;
+  const ans=$('#ans');
+  if(ans){
+    ans.oninput=()=>{S.a[S.cur]=ans.value;touch();const b=v.querySelector(`.rail [data-id="${S.cur}"]`);if(b)b.classList.toggle('has',hasText(S.cur));const c=$('#chk');if(c&&hasText(S.cur)&&!c.dataset.seen){c.open=true;c.dataset.seen='1';}};
+    $('#settle').onclick=()=>{S.s[S.cur]=!S.s[S.cur];touch();render();};
+    const p=$('#prev'),n=$('#next');
+    if(p)p.onclick=()=>goto(Q[idx(S.cur)-1].id);
+    if(n)n.onclick=()=>goto(Q[idx(S.cur)+1].id);
+  }
+  v.querySelectorAll('[data-pw]').forEach(t=>t.oninput=()=>{S.pw[t.dataset.pw]=t.value;touch();});
+  v.querySelectorAll('[data-dr]').forEach(t=>t.oninput=()=>{S.dr[t.dataset.dr]=t.value;touch();});
+  v.querySelectorAll('[data-ck]').forEach(c=>c.onchange=()=>{S.ck[c.dataset.ck]=c.checked;touch();});
+  const dl=$('#dl');
+  if(dl){
+    const msg=t=>{$('#outmsg').textContent=t;};
+    dl.onclick=async()=>{
+      try{const d=window.claude&&claude.use?await claude.use('downloads'):null;
+        if(d){await d.save({filename:'one-question-at-a-time-notes.md',data:exportMd()});msg('Saved.');return;}
+        const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([exportMd()],{type:'text/markdown'}));a.download='one-question-at-a-time-notes.md';a.click();msg('Downloaded.');
+      }catch(e){msg('Download was not completed. Use Copy instead.');}
+    };
+    $('#cp').onclick=async()=>{
+      const t=$('#outtxt');
+      try{await navigator.clipboard.writeText(t.value);msg('Copied.');}catch(e){t.select();msg('Selected. Copy it with your keyboard.');}
+    };
+  }
+}
+render();
+initDb();
+</script>
+<script>
+if('serviceWorker' in navigator){addEventListener('load',()=>navigator.serviceWorker.register('sw.js').catch(()=>{}));}
+</script>
+</body>
+</html>

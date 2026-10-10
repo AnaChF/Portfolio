@@ -1,0 +1,8 @@
+{
+  "appId": "com.anakis.onequestion",
+  "appName": "One Question",
+  "webDir": "www",
+  "backgroundColor": "#EFEAE0",
+  "ios": { "contentInset": "never" },
+  "android": { "backgroundColor": "#EFEAE0" }
+}
