@@ -1,5 +1,5 @@
 /* Offline support: the app shell is cached on install, Google Fonts are cached the first time they load. */
-const VERSION = 'one-question-v1';
+const VERSION = 'one-question-v2';
 const SHELL = ['./', 'index.html', 'manifest.webmanifest', 'icons/icon-192.png', 'icons/icon-512.png', 'icons/apple-touch-icon.png'];
 
 self.addEventListener('install', e => {

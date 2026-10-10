@@ -12,6 +12,10 @@ The same page ships three ways.
 
 Outside Claude the account sync switches itself off and the status in the header reads "Saved in this browser". Use **Export** to move notes between devices.
 
+## Brand
+
+Follows the anakis brand identity: Fraunces for display and the wordmark, Source Serif 4 for running text, Inter for interface text; Ink, Bone, Forest, Rust and Sage as the palette. The icon is the wordmark alone, since the brand has no separate mark yet. The dark theme and the lighter tints (panel, field, rule lines) are derived from the palette and are not part of the brand document.
+
 ## Installable web app
 
 Files: `index.html`, `manifest.webmanifest`, `sw.js`, `icons/`. The service worker caches the app and its fonts, so it works offline after the first visit.
@@ -39,6 +43,8 @@ npm run open:ios        # opens Xcode (macOS only): Run, or Product > Archive
 ```
 
 Re-run `npm run sync` after every change to `index.html`.
+
+The app icons and splash screens come from `native/assets/` (the anakis wordmark in Fraunces, Bone on Forest for icons, Ink on Bone for the light splash, Bone on near-black for the dark one). After changing those files, run `npm run assets` to regenerate every Android and iOS size.
 
 For iOS, install CocoaPods once (`sudo gem install cocoapods`) and run `npx cap sync ios` on the Mac before opening Xcode.
 

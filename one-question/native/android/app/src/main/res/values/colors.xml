@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- anakis palette: Forest, Ink, Rust -->
+    <color name="colorPrimary">#24382E</color>
+    <color name="colorPrimaryDark">#1C201B</color>
+    <color name="colorAccent">#A85A34</color>
+</resources>
